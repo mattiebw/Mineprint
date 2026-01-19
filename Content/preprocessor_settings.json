@@ -1,0 +1,35 @@
+{
+  "IgnoredFilePatterns": [],
+  "LibraryCopies": {
+    "Windows": [
+        {
+            "RelativePath": "../Mineprint/Vendor/SDL/Lib/Win64/SDL3.dll",
+            "OutputRelativePath": "./../"
+        }
+    ],
+    "Linux": [
+        {
+            "RelativePath": "../Mineprint/Vendor/SDL/Lib/Linux64/libSDL3.so",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Mineprint/Vendor/SDL/Lib/Linux64/libSDL3.so.0",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Mineprint/Vendor/SDL/Lib/Linux64/libSDL3.so.0.4.0",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Mineprint/RunMineprint.sh",
+            "OutputRelativePath": "./../"
+        }
+    ]
+  },
+  "ProcessorSettings": {
+    "MeshExtension": ".mesh"
+  },
+  "SpeculativePathAdditions": [
+    "C:/Temp/VulkanSDK/Bin"
+  ]
+}

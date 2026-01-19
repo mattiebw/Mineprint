@@ -1,0 +1,10 @@
+[submodule "Mineprint/Vendor/imgui"]
+	path = Mineprint/Vendor/imgui
+	url = https://github.com/ocornut/imgui
+	branch = docking
+[submodule "Mineprint/Vendor/spdlog"]
+	path = Mineprint/Vendor/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "Mineprint/Vendor/stb"]
+	path = Mineprint/Vendor/stb
+	url = https://github.com/nothings/stb
