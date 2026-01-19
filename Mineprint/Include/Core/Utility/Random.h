@@ -13,7 +13,9 @@ class Random
 public:
     static void Init()
     {
-        s_RandomEngine.seed(std::random_device()());
+        std::random_device randomDevice;
+        s_RandomEngine.seed(randomDevice());
+        s_RandomEngine64.seed(randomDevice());
     }
 
     NODISCARD FORCEINLINE static f32 Float()
@@ -23,17 +25,17 @@ public:
 
     NODISCARD FORCEINLINE static f32 Float(f32 min, f32 max)
     {
-        return min + s_Distribution(s_RandomEngine) * (max - min);
+        return min + (Float() * (max - min));
     }
 
     NODISCARD FORCEINLINE static f64 Double()
     {
-        return s_DoubleDistribution(s_RandomEngine);
+        return s_DoubleDistribution(s_RandomEngine64);
     }
 
     NODISCARD FORCEINLINE static f64 Double(f64 min, f64 max)
     {
-        return min + s_DoubleDistribution(s_RandomEngine) * (max - min);
+        return min + (Double() * (max - min));
     }
 
     NODISCARD FORCEINLINE static s32 Int()
@@ -43,7 +45,7 @@ public:
 
     NODISCARD FORCEINLINE static s32 Int(s32 min, s32 max)
     {
-        return min + s_IntDistribution(s_RandomEngine) % (max - min);
+        return min + (Int() % (max - min));
     }
 
     NODISCARD FORCEINLINE static u32 UInt()
@@ -53,13 +55,36 @@ public:
 
     NODISCARD FORCEINLINE static u32 UInt(u32 min, u32 max)
     {
-        return min + s_UIntDistribution(s_RandomEngine) % (max - min);
+        return min + (UInt() % (max - min));
+    }
+
+    NODISCARD FORCEINLINE static s64 Long()
+    {
+        return s_LongDistribution(s_RandomEngine64);
+    }
+
+    NODISCARD FORCEINLINE static s64 Long(s64 min, s64 max)
+    {
+        return min + (Long() % (max - min));
+    }
+
+    NODISCARD FORCEINLINE static u64 ULong()
+    {
+        return s_ULongDistribution(s_RandomEngine64);
+    }
+
+    NODISCARD FORCEINLINE static u64 ULong(u64 min, u64 max)
+    {
+        return min + (ULong() % (max - min));
     }
 
 private:
     static std::mt19937                        s_RandomEngine;
+    static std::mt19937_64                     s_RandomEngine64;
     static std::uniform_real_distribution<f32> s_Distribution;
     static std::uniform_real_distribution<f64> s_DoubleDistribution;
     static std::uniform_int_distribution<s32>  s_IntDistribution;
     static std::uniform_int_distribution<u32>  s_UIntDistribution;
+    static std::uniform_int_distribution<s64>  s_LongDistribution;
+    static std::uniform_int_distribution<u64>  s_ULongDistribution;
 };

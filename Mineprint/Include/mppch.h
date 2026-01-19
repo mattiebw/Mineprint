@@ -36,6 +36,7 @@
 #include "Core/Assert.h"
 #include "Core/MineprintCore.h"
 #include "Core/Utility/Random.h"
+#include "Core/Utility/UUID.h"
 #include "Core/Utility/Buffer.h"
 #include "Core/Utility/Timer.h"
 #include "Core/Utility/FileUtil.h"
