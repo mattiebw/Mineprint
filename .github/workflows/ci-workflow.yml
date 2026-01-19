@@ -43,11 +43,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: recursive
-    - name: Install Vulkan SDK
-      uses: humbletim/install-vulkan-sdk@v1.2
-      with:
-        version: 1.4.309.0
-        cache: true
     - name: Create Project Files
       run: bash Setup.sh
     - name: String Case
