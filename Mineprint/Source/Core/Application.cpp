@@ -12,9 +12,12 @@
 #endif
 
 #include "Core/Input/Input.h"
+#include "Core/EmbeddedContent/OpenSans.h"
 
-Application* Application::s_Instance      = nullptr;
-bool         Application::s_ShouldRestart = false;
+Application* Application::s_Instance        = nullptr;
+bool         Application::s_ShouldRestart   = false;
+ImFont*      Application::s_OpenSansRegular = nullptr;
+ImFont*      Application::s_OpenSansBold    = nullptr;
 
 Application::Application(ApplicationSpecification spec)
     : m_Specification(std::move(spec)),
@@ -106,7 +109,7 @@ void Application::Run()
         BeginImGUI();
 
         OnDrawIMGui.Execute();
-        
+
         ImGui::Begin("App Settings");
         ImGui::Checkbox("Should Restart", &s_ShouldRestart);
         if (ImGui::BeginCombo("VSync", VSyncModeToString(m_Window.GetVSync())))
@@ -126,7 +129,7 @@ void Application::Run()
         m_Renderer.Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        SDL_Window* backupCurrentWindow = SDL_GL_GetCurrentWindow();
+        SDL_Window*   backupCurrentWindow  = SDL_GL_GetCurrentWindow();
         SDL_GLContext backupCurrentContext = SDL_GL_GetCurrentContext();
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
@@ -148,7 +151,7 @@ void Application::Shutdown()
 
     if (m_Window.IsValid())
         m_Window.Destroy();
-    
+
     SDL_Quit();
 
     // We'll only shut down the log fully if we're not restarting.
@@ -213,10 +216,10 @@ bool Application::InitSDL() const
 bool Application::InitImGUI()
 {
     MP_CHECK(!m_ImGUIInitialized, "ImGUI already initialized");
-    
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    
+
     ImGuiIO& io    = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable | ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
@@ -226,8 +229,17 @@ bool Application::InitImGUI()
              "Failed to init ImGUI SDL3 backend for OpenGL");
     MP_CHECK(ImGui_ImplOpenGL3_Init("#version 330"), "Failed to init ImGUI OpenGL3 backend");
 
+    // Add default fonts.
+    ImFontConfig config;
+    config.FontDataOwnedByAtlas = false;
+    s_OpenSansRegular = io.Fonts->AddFontFromMemoryTTF(OpenSans_Regular_ttf, static_cast<int>(OpenSans_Regular_ttf_len),
+                                                       16.0f, &config);
+    s_OpenSansBold = io.Fonts->AddFontFromMemoryTTF(OpenSans_Bold_ttf, static_cast<int>(OpenSans_Bold_ttf_len), 16.0f,
+                                                    &config);
+    io.FontDefault = s_OpenSansRegular;
+
     m_ImGUIInitialized = true;
-    
+
     return true;
 }
 
@@ -236,6 +248,6 @@ void Application::ShutdownImGUI()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
-    
+
     m_ImGUIInitialized = false;
 }

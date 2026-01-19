@@ -14,7 +14,7 @@ class Application
 {
 public:
     explicit Application(ApplicationSpecification spec);
-    
+
     bool Initialise();
     void Run();
     void Shutdown();
@@ -39,6 +39,10 @@ public:
 
     NODISCARD FORCEINLINE static Application* Get() { return s_Instance; }
 
+    // TODO(mware): Move font management to some other dedicated class that will handle ImGui themeing.
+    NODISCARD FORCEINLINE static ImFont* GetOpenSansRegular() { return s_OpenSansRegular; }
+    NODISCARD FORCEINLINE static ImFont* GetOpenSansBold() { return s_OpenSansBold; }
+
     MulticastDelegate<>               OnDrawIMGui;
     CascadingMulticastDelegate<false> OnApplicationCloseRequested;
 
@@ -54,8 +58,11 @@ protected:
     Renderer                 m_Renderer;
     bool                     m_Running          = false;
     bool                     m_ImGUIInitialized = false;
-    
+
     // Static instance and variables.
     static Application* s_Instance;
     static bool         s_ShouldRestart;
+
+    static ImFont* s_OpenSansRegular;
+    static ImFont* s_OpenSansBold;
 };
