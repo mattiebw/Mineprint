@@ -21,7 +21,13 @@ ImFont*      Application::s_OpenSansBold    = nullptr;
 
 Application::Application(ApplicationSpecification spec)
     : m_Specification(std::move(spec)),
-      m_Window(Window({.Title = m_Specification.Name, .Size = {1280, 720}, .Fullscreen = false, .Resizable = true}))
+      m_Window(Window({
+          .Title      = m_Specification.Name,
+          .Size       = {1280, 720},
+          .MinSize    = {800, 400},
+          .Fullscreen = false,
+          .Resizable  = true,
+      }))
 {
     MP_ASSERT(!m_Specification.Name.empty(), "Application name cannot be empty");
     MP_ASSERT(!m_Specification.Author.empty(), "Application author cannot be empty");
