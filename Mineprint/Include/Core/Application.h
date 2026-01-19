@@ -32,7 +32,7 @@ public:
     NODISCARD FORCEINLINE bool                            IsRunning() const { return m_Running; }
 
     NODISCARD FORCEINLINE static bool ShouldRestart() { return s_ShouldRestart; }
-    NODISCARD FORCEINLINE static void RequestRestart(bool restart = true)
+    FORCEINLINE static void RequestRestart(bool restart = true)
     {
         s_ShouldRestart = restart;
     }
