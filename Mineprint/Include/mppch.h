@@ -35,6 +35,7 @@
 #include <SDL3/SDL_assert.h> // Even though we use our own assertion system, we need this for SDL_TriggerBreakpoint!
 #include "Core/Assert.h"
 #include "Core/MineprintCore.h"
+#include "Core/Utility/Random.h"
 #include "Core/Utility/Buffer.h"
 #include "Core/Utility/Timer.h"
 #include "Core/Utility/FileUtil.h"

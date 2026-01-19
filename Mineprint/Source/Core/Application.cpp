@@ -39,7 +39,9 @@ bool Application::Initialise()
     MP_ASSERT(!s_Instance, "Application already initialised!");
     s_Instance = this;
 
+    // Initialise core systems.
     InitLog(SDL_GetPrefPath(m_Specification.Author.c_str(), m_Specification.Name.c_str()));
+    Random::Init();
 
     MP_INFO("Initialising application: {} by {}", m_Specification.Name, m_Specification.Author);
     auto workingDir = std::filesystem::current_path().string();
