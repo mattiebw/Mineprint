@@ -2,7 +2,6 @@
 
 // Non-owning raw buffer class
 // Adapted from https://github.com/TheCherno/Hazel/blob/1feb70572fa87fa1c4ba784a2cfeada5b4a500db/Hazel/src/Hazel/Core/Buffer.h
-
 struct Buffer
 {
     u8*    Data = nullptr;
@@ -82,43 +81,13 @@ struct Buffer
     }
 };
 
-// And also an owning scoped buffer:
-
-struct ScopedBuffer
+// An owning scoped buffer.
+struct ScopedBuffer : public Buffer
 {
-    ScopedBuffer(const Buffer& buffer)
-        : m_Buffer(buffer)
-    {
-    }
-
-    ScopedBuffer(Buffer&& buffer)
-        : m_Buffer(std::move(buffer))
-    {
-    }
-
-    ScopedBuffer(size_t size)
-        : m_Buffer(size)
-    {
-    }
-
     ~ScopedBuffer()
     {
-        m_Buffer.Release();
+        Release();
     }
-
-    NODISCARD FORCEINLINE u8*    Data() const { return m_Buffer.Data; }
-    NODISCARD FORCEINLINE size_t Size() const { return m_Buffer.Size; }
-
-    template <typename T>
-    NODISCARD FORCEINLINE T* As()
-    {
-        return m_Buffer.As<T>();
-    }
-
-    operator bool() const { return m_Buffer; }
-
-private:
-    Buffer m_Buffer;
 };
 
 class BufferReader
@@ -179,4 +148,95 @@ private:
     u8* m_BufferBegin;
     u32 m_BufferSize;
     u32 m_ReadOffset;
+};
+
+class BufferReadWriter
+{
+public:
+    BufferReadWriter(u8* buffer, u32 bufferSize)
+        : m_BufferBegin(buffer), m_BufferSize(bufferSize), m_ReadOffset(0), m_WriteOffset(0)
+    {
+    }
+
+    explicit BufferReadWriter(const Buffer& buffer)
+        : m_BufferBegin(buffer.Data), m_BufferSize(static_cast<u32>(buffer.Size)), m_ReadOffset(0), m_WriteOffset(0)
+    {
+    }
+
+    FORCEINLINE u32 GetReadOffset() const { return m_ReadOffset; }
+    FORCEINLINE u32 GetWriteOffset() const { return m_WriteOffset; }
+    FORCEINLINE u8* GetBufferAtReadOffset() const { return m_BufferBegin + m_ReadOffset; }
+    FORCEINLINE u8* GetBufferAtWriteOffset() const { return m_BufferBegin + m_WriteOffset; }
+    FORCEINLINE u8* GetBuffer() const { return m_BufferBegin; }
+    FORCEINLINE u32 GetBufferSize() const { return m_BufferSize; }
+    FORCEINLINE u32 GetRemainingReadSize() const { return m_BufferSize - m_ReadOffset; }
+    FORCEINLINE u32 GetRemainingWriteSize() const { return m_BufferSize - m_WriteOffset; }
+
+    void Reset()
+    {
+        m_ReadOffset  = 0;
+        m_WriteOffset = 0;
+    }
+
+    void SeekForReading(u32 offset)
+    {
+        m_ReadOffset = offset;
+    }
+
+    void SeekForWriting(u32 offset)
+    {
+        m_WriteOffset = offset;
+    }
+
+    void SkipForReading(u32 offset)
+    {
+        m_ReadOffset += offset;
+    }
+
+    void SkipForWriting(u32 offset)
+    {
+        m_WriteOffset += offset;
+    }
+
+    template <typename T>
+    T Read()
+    {
+        if (m_ReadOffset + sizeof(T) > m_BufferSize)
+            return T();
+
+        T value      = *reinterpret_cast<T*>(m_BufferBegin + m_ReadOffset);
+        m_ReadOffset += sizeof(T);
+        return value;
+    }
+
+    bool Write(const void* data, u32 size)
+    {
+        if (m_WriteOffset + size > m_BufferSize)
+            return false;
+
+        memcpy(m_BufferBegin + m_WriteOffset, data, size);
+        m_WriteOffset += size;
+        return true;
+    }
+    
+    template<typename T>
+    bool Write(const T& value)
+    {
+        return Write(&value, sizeof(T));
+    }
+
+    void CopyTo(u8* dest, u32 size)
+    {
+        if (m_ReadOffset + size > m_BufferSize)
+            return;
+
+        memcpy(dest, m_BufferBegin + m_ReadOffset, size);
+        m_ReadOffset += size;
+    }
+
+private:
+    u8* m_BufferBegin;
+    u32 m_BufferSize;
+    u32 m_ReadOffset;
+    u32 m_WriteOffset;
 };
